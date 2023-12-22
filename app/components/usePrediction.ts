@@ -38,8 +38,7 @@ export const usePrediction = (): usePredictionType => {
       setPrediction(prediction);
     };
     if (predictionId) {
-      getStoredPrediction(predictionId).then(r => {
-      });
+      getStoredPrediction(predictionId).then(() => {});
     }
   }, []);
 

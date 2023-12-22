@@ -28,7 +28,7 @@ export default function Prediction() {
   };
 
   return (
-    <div className="w-3/5 flex flex-col items-center justify-between w-full">
+    <div className="w-3/5 flex flex-col items-center justify-between">
       {error && <div>{error}</div>}
       <div className="w-full flex flex-col items-center ">
         {prediction && (
