@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 
-const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
-const fetchPredictionResult = async (predictionId) => {
+const fetchPredictionResult = async (predictionId: string) => {
   const response = await fetch("/api/prediction/" + predictionId);
   const prediction = await response.json();
 
@@ -12,11 +12,11 @@ const fetchPredictionResult = async (predictionId) => {
   return prediction;
 };
 
-const queryPrediction = async (promptInput) => {
+const queryPrediction = async (predictionInput: PredictionInput) => {
   const response = await fetch("/api/prediction", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(promptInput)
+    body: JSON.stringify(predictionInput)
   });
   let prediction = await response.json();
   if (response.status !== 201) {
@@ -25,26 +25,28 @@ const queryPrediction = async (promptInput) => {
   return prediction;
 };
 
-export const usePrediction = () => {
-  const [prediction, setPrediction] = useState(null);
-  const [error, setError] = useState(null);
+type usePredictionType = [Prediction | null, string | null, (predictionInput:PredictionInput) => void]
+
+export const usePrediction = (): usePredictionType => {
+  const [prediction, setPrediction] = useState<Prediction | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-      const predictionId = window.localStorage.getItem("prediction_id");
-      const getStoredPrediction = async (predictionId) => {
-        const prediction = await fetchPredictionResult(predictionId);
-        setPrediction(prediction);
-      };
-      if (predictionId) {
-        getStoredPrediction(predictionId).then(r => {
-        });
-      }
-    }, []);
+    const predictionId = window.localStorage.getItem("prediction_id");
+    const getStoredPrediction = async (predictionId: string) => {
+      const prediction = await fetchPredictionResult(predictionId);
+      setPrediction(prediction);
+    };
+    if (predictionId) {
+      getStoredPrediction(predictionId).then(r => {
+      });
+    }
+  }, []);
 
-  const fetchPrediction = async (promptInput) => {
+  const fetchPrediction = async (predictionInput: PredictionInput) => {
     try {
       setPrediction(null);
-      let prediction = await queryPrediction(promptInput);
+      let prediction = await queryPrediction(predictionInput);
       setPrediction(prediction);
       window.localStorage.setItem("prediction_id", prediction.id);
 
@@ -56,7 +58,7 @@ export const usePrediction = () => {
         prediction = await fetchPredictionResult(prediction.id);
         setPrediction(prediction);
       }
-    } catch (e) {
+    } catch (e:any) {
       setError(e.message);
       setPrediction(null);
     }

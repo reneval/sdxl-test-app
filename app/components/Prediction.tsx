@@ -6,7 +6,7 @@ import PromptInput from "@/app/components/PromptInput";
 export default function Prediction() {
   const [prediction, error, fetchPrediction] = usePrediction();
 
-  const handleSubmit = async (prompt, file) => {
+  const handleSubmit = async (prompt:string, file: File | undefined) => {
     if (file) {
       const reader = new FileReader();
       reader.onload = async () => {
@@ -14,14 +14,16 @@ export default function Prediction() {
           await fetchPrediction({
             prompt,
             image: reader.result
-          });
+          } as PredictionInput);
         } catch (error) {
           console.error("Error:", error);
         }
       };
       reader.readAsDataURL(file);
     } else {
-      await fetchPrediction({ prompt });
+      if(fetchPrediction){
+        await fetchPrediction({ prompt });
+      }
     }
   };
 
@@ -34,12 +36,12 @@ export default function Prediction() {
             {prediction.output && (
               <Image
                 fill
-                src={prediction.output[prediction.output.length - 1]}
+                src={prediction.output[prediction!.output.length - 1]}
                 alt="output"
                 sizes="100vw"
               />
             )}
-            {["processing", "starting"].includes(prediction.status) &&
+            {["processing", "starting"].includes(prediction!.status) &&
               <div role="status"
                    className="absolute flex items-center justify-center h-full w-full bg-gray-300 rounded-lg animate-pulse dark:bg-gray-700">
                 <svg className="w-10 h-10 text-gray-200 dark:text-gray-600" aria-hidden="true"

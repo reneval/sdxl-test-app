@@ -1,8 +1,12 @@
 import React, { useState } from "react";
 import { useDropzone } from "react-dropzone";
 
-export default function PromptInput({ onSubmit, onSubmitFile }) {
-  const [uploadedFiles, setUploadedFiles] = useState([]);
+type PromptInputProps = {
+  onSubmit: (prompt:string, file: File ) => void
+}
+
+export default function PromptInput({ onSubmit }:PromptInputProps) {
+  const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [prompt, setPrompt] = useState("");
   const { getRootProps, getInputProps, open } = useDropzone({
     accept: {
@@ -23,7 +27,7 @@ export default function PromptInput({ onSubmit, onSubmitFile }) {
 
   return (
     <div className="w-full">
-      <form {...getRootProps()} onSubmit={onSubmit}>
+      <form {...getRootProps()}>
         <input name="file" {...getInputProps()} />
         <label htmlFor="message"
                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white w-full">Prompt</label>
